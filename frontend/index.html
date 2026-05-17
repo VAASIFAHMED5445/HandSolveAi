@@ -1,1 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HandSolveAI</title>
+</head>
+<body>
 
+    <h1>HandSolveAI</h1>
+
+    <input type="file" id="imageInput">
+    <button onclick="uploadImage()">Upload</button>
+
+    <h2>Detected Text:</h2>
+    <p id="result"></p>
+
+    <script>
+        async function uploadImage() {
+
+            const input = document.getElementById('imageInput');
+
+            if(input.files.length === 0){
+                alert("Choose image first");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', input.files[0]);
+
+            try {
+
+                const response = await fetch('http://127.0.0.1:5000/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                console.log(data);
+
+                if(data.detected_text){
+                    document.getElementById('result').innerText = data.detected_text;
+                }
+                else{
+                    document.getElementById('result').innerText = data.error;
+                }
+
+            } catch(error){
+                console.log(error);
+                alert("Error connecting backend");
+            }
+        }
+    </script>
+
+</body>
+</html>
